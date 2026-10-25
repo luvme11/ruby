@@ -1015,7 +1015,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
 
 <div class="adm" id="adm" aria-hidden="true">
   <div class="adw" role="dialog" aria-label="관리자">
-    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v8</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
+    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v9</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
     <div class="adb">
       <nav class="adn" id="admNav"></nav>
       <div class="adm-main" id="admMain">
@@ -1236,6 +1236,64 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       form: function (w) { return [field('증상 이름', inp(w, 'who')), field('환자 대사', inp(w, 'say'))]; } }
   };
   function bdCats() { return S.bd.filter === 'all' ? BD_ORDER : [S.bd.filter]; }
+  /* ---------- 글 쓰기/수정 창 (화면 맨 위 별도 창) ---------- */
+  function eh(t) { return String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  var BDF = {
+    sep: [{ k: 'level', t: 'text', l: '제목 (예: 절대 NG · 조심해 주세요)' }, { k: 'kind', t: 'select', l: '색' }, { k: 'items', t: 'lines', l: '내용 (한 줄에 하나씩)', rows: 10 }],
+    vc: [{ k: 'title', t: 'text', l: '제목' }, { k: 'text', t: 'area', l: '내용', rows: 14 }],
+    ao: [{ k: 'text', t: 'area', l: '이렇게 해 주세요 (한 항목)', rows: 4 }],
+    cn: [{ k: 'name', t: 'text', l: '이름' }, { k: 'href', t: 'text', l: '이동할 주소 (https://...)' }, { k: 'img', t: 'img', l: '배너 이미지' }],
+    lv: [{ k: 'file', t: 'text', l: 'FILE 이름' }, { k: 'img', t: 'img', l: '이미지' }, { k: 'name', t: 'text', l: '영문 이름' }, { k: 'kr', t: 'text', l: '한글 이름' }, { k: 'meta', t: 'pipe', l: '설정 줄 ( | 로 구분 )' }, { k: 'quote', t: 'text', l: '대사' }, { k: 'desc', t: 'area', l: '설명글', rows: 8 }],
+    ra: [{ k: 'who', t: 'text', l: '증상 이름' }, { k: 'say', t: 'text', l: '환자 대사' }]
+  };
+  var IN = 'display:block;width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #9db3d6;border-radius:8px;background:#fff;color:#15294f;font:14px/1.6 sans-serif;margin:0';
+  var LB = 'display:block;font:11px sans-serif;letter-spacing:.08em;color:#5f7fbb;margin:0 0 5px';
+  function closeEditor() { var o = document.getElementById('bdOv'); if (o && o.parentNode) o.parentNode.removeChild(o); }
+  function openEditor(ed) {
+    closeEditor();
+    var C = BD[ed.cat], w = ed.w, isNew = ed.idx == null, F = BDF[ed.cat], h = '', i;
+    for (i = 0; i < F.length; i++) {
+      var f = F[i], v = w[f.k];
+      h += '<div style="margin:0 0 14px"><label style="' + LB + '">' + eh(f.l) + '</label>';
+      if (f.t === 'text') h += '<input type="text" data-k="' + f.k + '" value="' + eh(v) + '" style="' + IN + '">';
+      else if (f.t === 'pipe') h += '<input type="text" data-k="' + f.k + '" value="' + eh((Array.isArray(v) ? v : []).join(' | ')) + '" style="' + IN + '">';
+      else if (f.t === 'area') h += '<textarea data-k="' + f.k + '" rows="' + (f.rows || 4) + '" style="' + IN + ';resize:vertical">' + eh(v) + '</textarea>';
+      else if (f.t === 'lines') h += '<textarea data-k="' + f.k + '" rows="' + (f.rows || 6) + '" style="' + IN + ';resize:vertical">' + eh((Array.isArray(v) ? v : []).join('\n')) + '</textarea>';
+      else if (f.t === 'select') h += '<select data-k="' + f.k + '" style="' + IN + '"><option value="hard"' + (v !== 'soft' ? ' selected' : '') + '>절대 NG (분홍)</option><option value="soft"' + (v === 'soft' ? ' selected' : '') + '>조심 (노랑)</option></select>';
+      else if (f.t === 'img') h += '<div data-img="' + f.k + '"></div>';
+      h += '</div>';
+    }
+    var ov = document.createElement('div'); ov.id = 'bdOv';
+    ov.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:200;background:rgba(21,41,79,.5);display:flex;align-items:center;justify-content:center;padding:14px;box-sizing:border-box';
+    ov.innerHTML = '<div style="background:#fbfdff;color:#15294f;border:1px solid #9db3d6;border-radius:12px;width:100%;max-width:640px;max-height:92vh;overflow:auto;padding:20px 22px;box-sizing:border-box;font-family:sans-serif">' +
+      '<h3 style="margin:0 0 4px;font-size:18px">' + (isNew ? '새 글 쓰기 · ' : '글 수정 · ') + eh(C.label) + '</h3>' +
+      '<p style="margin:0 0 16px;font-size:12px;line-height:1.7;color:#6a7ea2">"저장하고 사이트에 올리기"를 누르면 GitHub에 바로 저장돼요. 사이트에는 1~2분 뒤에 반영돼요.</p>' +
+      '<div data-form="1">' + h + '</div>' +
+      '<p data-err="1" style="margin:0 0 10px;font-size:12px;color:#c8687c;display:none"></p>' +
+      '<div data-btns="1" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>';
+    document.body.appendChild(ov);
+    var cnt = ov.querySelectorAll('[data-k]').length, err = ov.querySelector('[data-err]');
+    if (!cnt && !ov.querySelector('[data-img]')) { err.textContent = '입력칸이 0개예요 (진단: ' + ed.cat + ', 칸 정의 ' + F.length + '개). 이 글자를 그대로 알려 주세요.'; err.style.display = 'block'; }
+    F.forEach(function (f) { if (f.t === 'img') { var slot = ov.querySelector('[data-img="' + f.k + '"]'); if (slot) slot.appendChild(imgField(w, f.k, f.l)); } });
+    function mkBtn(text, primary, fn) { var b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.className = 'ab' + (primary ? '' : ' ghost'); b.addEventListener('click', fn); return b; }
+    var btns = ov.querySelector('[data-btns]');
+    btns.appendChild(mkBtn('저장하고 사이트에 올리기', true, function () {
+      F.forEach(function (f) {
+        var el = ov.querySelector('[data-k="' + f.k + '"]'); if (!el) return;
+        if (f.t === 'lines') w[f.k] = el.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
+        else if (f.t === 'pipe') w[f.k] = el.value.split('|').map(function (x) { return x.trim(); }).filter(Boolean);
+        else w[f.k] = el.value;
+      });
+      if (C.empty(w)) { err.textContent = '내용을 입력해 주세요.'; err.style.display = 'block'; return; }
+      var arr = C.arr(S.data), item = C.back(w);
+      if (isNew) arr.push(item); else arr[ed.idx] = item;
+      if (isNew) S.bd.filter = ed.cat;
+      closeEditor(); if (S.view === 'board') renderBoard();
+      save().then(function () { if (S.view === 'board' && !document.getElementById('bdOv')) renderBoard(); });
+    }));
+    btns.appendChild(mkBtn('취소', false, closeEditor));
+    var first = ov.querySelector('[data-k]'); if (first && first.focus) first.focus();
+  }
   function renderBoard() {
     var box = g('admEdit'); box.innerHTML = '';
     if (!S.data) return;
@@ -1250,7 +1308,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     bar.appendChild(tabs);
     var addable = BD_ORDER.filter(function (k) { return BD[k].add; });
     var sel = $('select'); addable.forEach(function (k) { var o = $('option', { value: k, text: BD[k].label }); if (k === S.bd.filter) o.selected = true; sel.appendChild(o); });
-    bar.appendChild($('div', { 'class': 'bd-new' }, [sel, $('button', { type: 'button', 'class': 'ab sm', text: '＋ 새 글 쓰기', onclick: function () { S.bd.edit = { cat: sel.value, idx: null, w: BD[sel.value].blank() }; renderBoard(); g('admMain').scrollTop = 0; } })]));
+    bar.appendChild($('div', { 'class': 'bd-new' }, [sel, $('button', { type: 'button', 'class': 'ab sm', text: '＋ 새 글 쓰기', onclick: function () { openEditor({ cat: sel.value, idx: null, w: BD[sel.value].blank() }); } })]));
     box.appendChild(bar);
     var shown = 0;
     bdCats().forEach(function (k) {
@@ -1264,7 +1322,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
           if (i > 0) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▲', title: '위로', onclick: function () { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
           if (i < arr.length - 1) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▼', title: '아래로', onclick: function () { var t = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
         }
-        act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '수정', onclick: function () { try { S.bd.edit = { cat: k, idx: i, w: C.work(arr[i]) }; } catch (err) { st('이 글을 열 수 없어요: ' + err.message, true); return; } renderBoard(); g('admMain').scrollTop = 0; } }));
+        act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '수정', onclick: function () { var w0; try { w0 = C.work(arr[i]); } catch (err) { st('이 글을 열 수 없어요: ' + err.message, true); return; } openEditor({ cat: k, idx: i, w: w0 }); } }));
         if (C.del) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '삭제', onclick: function () {
           if (!confirm('"' + v.t + '" 글을 삭제하고 사이트에서도 지울까요?\n(바로 GitHub에 저장돼요)')) return;
           arr.splice(i, 1); renderBoard(); save().then(function () { if (S.view === 'board' && !S.bd.edit) renderBoard(); });
@@ -1387,7 +1445,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
 
   function openAdm() { adm.classList.add('open'); adm.setAttribute('aria-hidden', 'false'); refresh(); }
   function closeAdm() { adm.classList.remove('open'); adm.setAttribute('aria-hidden', 'true'); }
-  function logout() { S.token = ''; S.data = null; S.pending = {}; S.view = 'gh'; S.bd.edit = null; try { sessionStorage.removeItem('heartTok'); } catch (e) {} g('admToken').value = ''; g('admMsg').textContent = ''; st(''); refresh(); }
+  function logout() { closeEditor(); S.token = ''; S.data = null; S.pending = {}; S.view = 'gh'; S.bd.edit = null; try { sessionStorage.removeItem('heartTok'); } catch (e) {} g('admToken').value = ''; g('admMsg').textContent = ''; st(''); refresh(); }
 
   var saved = {}; try { saved = JSON.parse(localStorage.getItem('heartAdm') || '{}'); } catch (e) {}
   var guess = ''; if (/\.github\.io$/.test(location.hostname)) guess = location.hostname.split('.')[0] + '/' + (location.pathname.split('/')[1] || '');
