@@ -110,14 +110,9 @@
     "sec": "Network · 연결된 곳",
     "banners": [
       {
-        "name": "(사이트 이름 1)",
-        "img": "",
-        "href": ""
-      },
-      {
-        "name": "(사이트 이름 2)",
-        "img": "",
-        "href": ""
+        "name": "LINK ZIP",
+        "img": "images/pmvoc6oakx9oa.jpg",
+        "href": "https://luvme11.github.io/link2/"
       },
       {
         "name": "(사이트 이름 3)",
