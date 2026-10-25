@@ -272,6 +272,54 @@
     "type": "favicon",
     "img": "images/pmvoanw678g7h.png"
   },
+  "texts": {
+    "type": "texts",
+    "v": {
+      "chRA": "RA",
+      "chRV": "RV",
+      "chLA": "LA",
+      "chLV": "LV",
+      "pulseOn": "Pulse on",
+      "pulseOff": "Pulse off",
+      "eye": "Clinical report · Evidence 01",
+      "lPatient": "환자명",
+      "vPatient": "OOO",
+      "lDoctor": "진료자",
+      "lDate": "진료일",
+      "lChart": "차트번호",
+      "vChart": "CASE 0419",
+      "foot": "DEPTH 06 · HEART ACTIVE",
+      "stamp1": "확인",
+      "stamp2": "CONFIRMED",
+      "attending": "담당의 · ATTENDING"
+    },
+    "nodes": {
+      "vc": {
+        "name": "Vena Cava",
+        "sub": "05 VC · 대정맥 · Disposition · 성향"
+      },
+      "ra": {
+        "name": "Right Atrium",
+        "sub": "01 RA · 우심방 · Pharmacy · 약 제조"
+      },
+      "cn": {
+        "name": "Coronary Network",
+        "sub": "06 CN · 관상동맥망 · Banner links · 링크"
+      },
+      "ao": {
+        "name": "Aortic Arch",
+        "sub": "04 AO · 대동맥궁 · Care list · 배려"
+      },
+      "sep": {
+        "name": "Septum",
+        "sub": "02 SEP · 심실중격 · NG list · NG 사항"
+      },
+      "lv": {
+        "name": "Left Ventricle",
+        "sub": "03 LV · 좌심실 · Pair profile · 페어"
+      }
+    }
+  },
   "site": {
     "type": "site",
     "title": "Surgery ward"
