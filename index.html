@@ -395,6 +395,25 @@ body {
 .mg-center p { margin: 0 0 12px; font-size: 13px; line-height: 1.7; color: #4a6fb8; }
 .mg-note { font-family: var(--font-data); font-size: 11px; letter-spacing: 0.08em; color: #3d5a96; text-align: center; min-height: 16px; }
 @media (max-width: 520px) { .mg-pot { grid-template-columns: 1fr; } }
+/* admin board */
+.bd-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 0 0 14px; }
+.bd-tabs { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 260px; }
+.bd-tab { padding: 5px 12px; border-radius: 14px; border: 1px solid #c9d9f2; background: #fff; color: #3d5a96; font: 12px var(--font-display); }
+.bd-tab.on { background: #e4eefc; border-color: #8db3f2; color: var(--blue); }
+.bd-tab em { font-style: normal; font-family: var(--font-data); font-size: 10px; margin-left: 5px; color: #8aa5d6; }
+.bd-new { display: flex; gap: 6px; align-items: center; }
+.adm .bd-new select { width: auto; padding: 6px 10px; }
+.bd-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid #d3e0f4; border-radius: 10px; background: #fff; margin-bottom: 8px; }
+.bd-badge { font: 10px var(--font-data); letter-spacing: 0.08em; padding: 3px 9px; border-radius: 10px; background: #eaf2ff; color: #4a6fb8; border: 1px solid #c9d9f2; white-space: nowrap; }
+.bd-badge.hard { background: #fdeef1; color: #c8687c; border-color: #efc3cc; }
+.bd-badge.soft { background: #fff6e4; color: #c08a2c; border-color: #f0d9a8; }
+.bd-main { min-width: 0; }
+.bd-t { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-s { font-size: 11px; color: var(--mute); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bd-act { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.bd-empty { padding: 26px 10px; text-align: center; font-size: 12px; color: var(--mute); border: 1px dashed #c9d9f2; border-radius: 10px; }
+.bd-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+@media (max-width: 640px) { .bd-row { grid-template-columns: minmax(0, 1fr); } .bd-act { justify-content: flex-start; } }
 /* sniper-scope cursor */
 :root { --cur: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2211%22 fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%223.4%22/%3E%3Cpath d=%22M16 1v8 M16 23v8 M1 16h8 M23 16h8%22 stroke=%22%23ffffff%22 stroke-width=%223.4%22 fill=%22none%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%223.4%22 fill=%22%23ffffff%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2211%22 fill=%22none%22 stroke=%22%234f86e8%22 stroke-width=%221.4%22/%3E%3Cpath d=%22M16 1v8 M16 23v8 M1 16h8 M23 16h8%22 stroke=%22%234f86e8%22 stroke-width=%221.4%22 fill=%22none%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%221.6%22 fill=%22%234f86e8%22/%3E%3Cpath d=%22M12 22h2 M18 22h2%22 stroke=%22%234f86e8%22 stroke-width=%221%22 fill=%22none%22/%3E%3C/svg%3E") 16 16, crosshair; --cur-hot: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%229%22 fill=%22none%22 stroke=%22%23ffffff%22 stroke-width=%223.4%22/%3E%3Cpath d=%22M16 1v10 M16 21v10 M1 16h10 M21 16h10%22 stroke=%22%23ffffff%22 stroke-width=%223.4%22 fill=%22none%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%223.4%22 fill=%22%23ffffff%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%229%22 fill=%22none%22 stroke=%22%234f86e8%22 stroke-width=%221.4%22/%3E%3Cpath d=%22M16 1v10 M16 21v10 M1 16h10 M21 16h10%22 stroke=%22%234f86e8%22 stroke-width=%221.4%22 fill=%22none%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%222.4%22 fill=%22%234f86e8%22/%3E%3C/svg%3E") 16 16, pointer; }
 html, body, body * { cursor: var(--cur) !important; }
@@ -996,7 +1015,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
 
 <div class="adm" id="adm" aria-hidden="true">
   <div class="adw" role="dialog" aria-label="관리자">
-    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v7</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
+    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v8</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
     <div class="adb">
       <nav class="adn" id="admNav"></nav>
       <div class="adm-main" id="admMain">
@@ -1164,6 +1183,111 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     }
   };
 
+  /* ---------- 글 게시판 ---------- */
+  S.bd = { filter: 'all', edit: null };
+  function kindSel(w) {
+    var sel = $('select'); [['hard', '절대 NG (분홍)'], ['soft', '조심 (노랑)']].forEach(function (o) { var op = $('option', { value: o[0], text: o[1] }); if (w.kind === o[0]) op.selected = true; sel.appendChild(op); });
+    sel.addEventListener('change', function () { w.kind = sel.value; }); return sel;
+  }
+  var BD_ORDER = ['sep', 'vc', 'ao', 'cn', 'lv', 'ra'];
+  var BD = {
+    sep: { label: 'NG 사항', add: true, del: true,
+      arr: function (d) { return d.sep.groups; },
+      view: function (x) { return { t: x.level || '(제목 없음)', s: (x.items || []).join(' · '), tag: x.kind === 'soft' ? '조심' : '절대 NG', cls: x.kind === 'soft' ? 'soft' : 'hard' }; },
+      work: function (x) { return clone(x); }, back: function (w) { w.items = w.items || []; return w; },
+      blank: function () { return { level: '', kind: 'hard', items: [] }; },
+      empty: function (w) { return !(w.level || '').trim() && !(w.items || []).length; },
+      form: function (w) { return [field('제목 (예: 절대 NG · 조심해 주세요)', inp(w, 'level')), field('색', kindSel(w)), field('내용 (한 줄에 하나씩)', lines(w, 'items', 10))]; } },
+    vc: { label: '성향', add: true, del: true,
+      arr: function (d) { return d.vc.sections; },
+      view: function (x) { return { t: x[0] || '(제목 없음)', s: (x[1] || '').replace(/\s+/g, ' ') }; },
+      work: function (x) { return { title: x[0], text: x[1] }; }, back: function (w) { return [w.title || '', w.text || '']; },
+      blank: function () { return { title: '', text: '' }; },
+      empty: function (w) { return !(w.title || '').trim() && !(w.text || '').trim(); },
+      form: function (w) { return [field('제목', inp(w, 'title')), field('내용', area(w, 'text', 14))]; } },
+    ao: { label: '배려 리스트', add: true, del: true,
+      arr: function (d) { return d.ao.items; },
+      view: function (x) { return { t: x || '(빈 항목)', s: '' }; },
+      work: function (x) { return { text: x }; }, back: function (w) { return (w.text || '').replace(/\s*\n\s*/g, ' ').trim(); },
+      blank: function () { return { text: '' }; },
+      empty: function (w) { return !(w.text || '').trim(); },
+      form: function (w) { return [field('이렇게 해 주세요 (한 항목)', area(w, 'text', 4))]; } },
+    cn: { label: '링크 · 배너', add: true, del: true,
+      arr: function (d) { return d.cn.banners; },
+      view: function (x) { return { t: x.name || '(이름 없음)', s: x.href || '(이동 주소 없음)' }; },
+      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      blank: function () { return { name: '', img: '', href: '' }; },
+      empty: function (w) { return !(w.name || '').trim() && !(w.href || '').trim() && !w.img; },
+      form: function (w) { return [field('이름', inp(w, 'name')), field('이동할 주소 (https://...)', inp(w, 'href', 'https://')), imgField(w, 'img', '배너 이미지')]; } },
+    lv: { label: '페어 소개', add: false, del: false,
+      arr: function (d) { return d.lv.pair; },
+      view: function (x) { return { t: (x.name || '') + ' · ' + (x.kr || ''), s: x.quote || '' }; },
+      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      empty: function () { return false; },
+      form: function (p) { return [field('FILE 이름', inp(p, 'file')), imgField(p, 'img', '이미지'), field('영문 이름', inp(p, 'name')), field('한글 이름', inp(p, 'kr')), field('설정 줄 ( | 로 구분 )', pipe(p, 'meta')), field('대사', inp(p, 'quote')), field('설명글', area(p, 'desc', 8))]; } },
+    ra: { label: '약 조제실 사연', add: false, del: false,
+      arr: function (d) { d.ra.orders = d.ra.orders || clone(H.defaults.ra.orders); return d.ra.orders; },
+      view: function (x) { return { t: x.who || '', s: x.say || '' }; },
+      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      empty: function () { return false; },
+      form: function (w) { return [field('증상 이름', inp(w, 'who')), field('환자 대사', inp(w, 'say'))]; } }
+  };
+  function bdCats() { return S.bd.filter === 'all' ? BD_ORDER : [S.bd.filter]; }
+  function renderBoard() {
+    var box = g('admEdit'); box.innerHTML = '';
+    if (!S.data) return;
+    if (S.bd.edit) return renderEditor(box);
+    box.appendChild($('h3', { text: '글 게시판' }));
+    box.appendChild($('p', { 'class': 'hint', text: 'NG · 성향 · 배려 · 링크 · 페어 · 약 조제실 글을 한곳에서 쓰고, 고치고, 지울 수 있어요. 글을 저장하면 GitHub에 바로 올라가고, 사이트에는 1~2분 뒤에 반영돼요.' }));
+    var bar = $('div', { 'class': 'bd-bar' }), tabs = $('div', { 'class': 'bd-tabs' });
+    [['all', '전체']].concat(BD_ORDER.map(function (k) { return [k, BD[k].label]; })).forEach(function (t) {
+      var n = t[0] === 'all' ? BD_ORDER.reduce(function (a, k) { return a + BD[k].arr(S.data).length; }, 0) : BD[t[0]].arr(S.data).length;
+      tabs.appendChild($('button', { type: 'button', 'class': 'bd-tab' + (S.bd.filter === t[0] ? ' on' : ''), onclick: function () { S.bd.filter = t[0]; renderBoard(); } }, [t[1], $('em', { text: String(n) })]));
+    });
+    bar.appendChild(tabs);
+    var addable = BD_ORDER.filter(function (k) { return BD[k].add; });
+    var sel = $('select'); addable.forEach(function (k) { var o = $('option', { value: k, text: BD[k].label }); if (k === S.bd.filter) o.selected = true; sel.appendChild(o); });
+    bar.appendChild($('div', { 'class': 'bd-new' }, [sel, $('button', { type: 'button', 'class': 'ab sm', text: '＋ 새 글 쓰기', onclick: function () { S.bd.edit = { cat: sel.value, idx: null, w: BD[sel.value].blank() }; renderBoard(); g('admMain').scrollTop = 0; } })]));
+    box.appendChild(bar);
+    var shown = 0;
+    bdCats().forEach(function (k) {
+      var C = BD[k], arr = C.arr(S.data);
+      arr.forEach(function (x, i) {
+        shown++;
+        var v = C.view(x), canMove = C.add;
+        var act = $('div', { 'class': 'bd-act' });
+        if (canMove) {
+          if (i > 0) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▲', title: '위로', onclick: function () { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
+          if (i < arr.length - 1) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▼', title: '아래로', onclick: function () { var t = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
+        }
+        act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '수정', onclick: function () { S.bd.edit = { cat: k, idx: i, w: C.work(arr[i]) }; renderBoard(); g('admMain').scrollTop = 0; } }));
+        if (C.del) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '삭제', onclick: function () {
+          if (!confirm('"' + v.t + '" 글을 삭제하고 사이트에서도 지울까요?\n(바로 GitHub에 저장돼요)')) return;
+          arr.splice(i, 1); renderBoard(); save().then(function () { if (S.view === 'board' && !S.bd.edit) renderBoard(); });
+        } }));
+        box.appendChild($('div', { 'class': 'bd-row' }, [$('span', { 'class': 'bd-badge ' + (v.cls || ''), text: v.tag ? C.label + ' · ' + v.tag : C.label }), $('div', { 'class': 'bd-main' }, [$('div', { 'class': 'bd-t', text: v.t }), v.s ? $('div', { 'class': 'bd-s', text: v.s }) : null]), act]));
+      });
+    });
+    if (!shown) box.appendChild($('div', { 'class': 'bd-empty', text: '아직 글이 없어요. 오른쪽 위 "새 글 쓰기"로 첫 글을 써 보세요.' }));
+  }
+  function renderEditor(box) {
+    var e = S.bd.edit, C = BD[e.cat], isNew = e.idx == null;
+    box.appendChild($('h3', { text: (isNew ? '새 글 쓰기 · ' : '글 수정 · ') + C.label }));
+    box.appendChild($('p', { 'class': 'hint', text: '"저장하고 사이트에 올리기"를 누르면 GitHub에 바로 저장돼요. 사이트에는 1~2분 뒤에 반영돼요.' }));
+    var card = $('div', { 'class': 'ad-card' }); C.form(e.w).forEach(function (n) { card.appendChild(n); }); box.appendChild(card);
+    var warn = $('p', { 'class': 'hint err', text: '내용을 입력해 주세요.' }); warn.hidden = true; box.appendChild(warn);
+    box.appendChild($('div', { 'class': 'bd-btns' }, [
+      $('button', { type: 'button', 'class': 'ab', text: '저장하고 사이트에 올리기', onclick: function () {
+        if (C.empty(e.w)) { warn.hidden = false; return; }
+        var arr = C.arr(S.data), item = C.back(e.w);
+        if (isNew) arr.push(item); else arr[e.idx] = item;
+        S.bd.edit = null; if (isNew) S.bd.filter = e.cat; renderBoard();
+        save().then(function () { if (S.view === 'board' && !S.bd.edit) renderBoard(); });
+      } }),
+      $('button', { type: 'button', 'class': 'ab ghost', text: '취소', onclick: function () { S.bd.edit = null; renderBoard(); } })
+    ]));
+  }
+
   /* ---------- window ---------- */
   function renderNav() {
     var nav = g('admNav'); nav.innerHTML = '';
@@ -1174,6 +1298,8 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       nav.appendChild(b);
     }
     item('gh', 'GitHub 설정');
+    nav.appendChild($('div', { 'class': 'sp', text: 'BOARD' }));
+    item('board', '📋 글 게시판');
     nav.appendChild($('div', { 'class': 'sp', text: 'POPUPS' }));
     ORDER.forEach(function (o) { item(o[0], o[1]); });
   }
@@ -1202,7 +1328,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     g('admLogin').hidden = !gh; g('admEdit').hidden = gh;
     var c = g('admConn'); c.hidden = !S.data; if (S.data) c.textContent = '연결됨 · ' + S.repo + ' (' + S.branch + ')';
     g('admSave').disabled = !S.data;
-    renderNav(); if (!gh) { try { renderView(); } catch (e) { st('화면 오류: ' + e.message, true); } }
+    renderNav(); if (!gh) { try { if (S.view === 'board') renderBoard(); else renderView(); } catch (e) { st('화면 오류: ' + e.message, true); } }
     g('admMain').scrollTop = 0;
   }
 
@@ -1228,32 +1354,33 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       S.data = base; S.pending = {};
       try { localStorage.setItem('heartAdm', JSON.stringify({ repo: S.repo, branch: S.branch, dir: S.dir })); } catch (e) {}
       try { sessionStorage.setItem('heartTok', S.token); } catch (e) {}
-      g('admToken').value = ''; m.textContent = ''; st(''); S.view = 'info'; refresh();
+      g('admToken').value = ''; m.textContent = ''; st(''); S.view = 'board'; S.bd.edit = null; refresh();
     }).catch(function (e) { m.textContent = e.status === 401 ? '토큰이 올바르지 않아요.' : (e.status === 404 ? '저장소를 찾을 수 없거나 토큰에 접근 권한이 없어요.' : e.message); });
   }
 
   function save() {
-    if (!S.data) return;
+    if (!S.data) return Promise.resolve(false);
     var btn = g('admSave'); btn.disabled = true; st('저장 중...');
     var used = JSON.stringify(S.data), p = Promise.resolve();
     Object.keys(S.pending).forEach(function (rel) {
       if (used.indexOf(rel) < 0) { delete S.pending[rel]; return; }
       p = p.then(function () { return api('PUT', '/contents/' + encodeURI(S.pending[rel].path), { message: 'admin: upload ' + rel, content: S.pending[rel].b64, branch: S.branch }).then(function () { delete S.pending[rel]; }); });
     });
-    p.then(function () {
+    var ok = false;
+    return p.then(function () {
       function put() { return getSha().then(function (f) {
         var body = { message: 'admin: update content', content: u8b64(JSON.stringify(S.data, null, 2)), branch: S.branch };
         if (f && f.sha) body.sha = f.sha; return api('PUT', '/contents/' + cpath(), body);
       }); }
       return put().catch(function (e) { if (e.status === 409 || e.status === 422) return new Promise(function (r) { setTimeout(r, 800); }).then(put); throw e; });
-    }).then(function () { H.apply(clone(S.data)); st('저장 완료 · 사이트 반영까지 1~2분 걸릴 수 있어요'); })
+    }).then(function () { H.apply(clone(S.data)); ok = true; st('저장 완료 · GitHub에 올라갔어요. 사이트에는 1~2분 뒤에 반영돼요'); })
       .catch(function (e) { st('저장 실패: ' + (e.name === 'AbortError' ? 'GitHub 응답이 25초 넘게 없어요. 네트워크를 확인하고 다시 저장해 주세요' : (e.status === 401 || e.status === 403 ? '토큰 권한을 확인해 주세요' : e.message)), true); })
-      .then(function () { btn.disabled = !S.data; });
+      .then(function () { btn.disabled = !S.data; return ok; });
   }
 
   function openAdm() { adm.classList.add('open'); adm.setAttribute('aria-hidden', 'false'); refresh(); }
   function closeAdm() { adm.classList.remove('open'); adm.setAttribute('aria-hidden', 'true'); }
-  function logout() { S.token = ''; S.data = null; S.pending = {}; S.view = 'gh'; try { sessionStorage.removeItem('heartTok'); } catch (e) {} g('admToken').value = ''; g('admMsg').textContent = ''; st(''); refresh(); }
+  function logout() { S.token = ''; S.data = null; S.pending = {}; S.view = 'gh'; S.bd.edit = null; try { sessionStorage.removeItem('heartTok'); } catch (e) {} g('admToken').value = ''; g('admMsg').textContent = ''; st(''); refresh(); }
 
   var saved = {}; try { saved = JSON.parse(localStorage.getItem('heartAdm') || '{}'); } catch (e) {}
   var guess = ''; if (/\.github\.io$/.test(location.hostname)) guess = location.hostname.split('.')[0] + '/' + (location.pathname.split('/')[1] || '');
