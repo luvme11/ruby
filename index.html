@@ -357,6 +357,7 @@ body {
 #musicMsg { position: fixed; left: 14px; bottom: 44px; z-index: 90; max-width: min(360px, 86vw); padding: 9px 14px; border-radius: 12px; background: rgba(255,255,255,.96); border: 1px solid #c9d9f2; box-shadow: 0 6px 24px rgba(60,100,200,.22); color: #3d5a96; font: 12px/1.6 var(--font-display); display: none; }
 @media (max-width: 760px) { .music { order: 6; align-self: flex-start; } }
 @media (prefers-reduced-motion: reduce) { .music-btn.on .eq i { animation: none; height: 60%; } }
+.rp p, .rp .ds, .rp-quote, .rp-note, .rp-rx .memo, .rp-ng li span, .rp-chk li span { white-space: pre-wrap; }
 /* medicine mini game */
 .mg { font-family: var(--font-display); color: var(--ink); }
 .mg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-family: var(--font-data); font-size: 10px; letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; }
@@ -643,7 +644,9 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
      photo / img : 이미지 주소를 넣으면 사진이 표시돼요 (비워두면 자리표시)
      href        : 배너를 눌렀을 때 이동할 주소 (https://...)              */
   var REPORTS = {
-    ra: { type: 'game', title: '약 조제실', sub: '01 RA · 우심방 · Pharmacy', dx: '약 제조', sec: 'Compounding · 약 제조 실습' },
+    ra: { type: 'game', title: '약 조제실', sub: '01 RA · 우심방 · Pharmacy', dx: '약 제조', sec: 'Compounding · 약 제조 실습',
+      ing: { moss: '푸른 이끼', lily: '은방울꽃', moon: '달빛 가루', sap: '붉은 수액', herb: '심장초', ice: '얼음 결정', honey: '꿀 시럽' },
+      orders: [{ who: '잠이 안 와요', say: '"요즘 밤마다 눈이 말똥말똥해요..."' }, { who: '열이 올라요', say: '"이마가 뜨끈뜨끈하고 어지러워요."' }, { who: '머리가 지끈거려요', say: '"관자놀이가 욱신욱신 쑤셔요."' }, { who: '기운이 없어요', say: '"몸이 축 처지고 힘이 안 나요."' }, { who: '열도 나고 잠도 못 자요', say: '"열 때문에 밤새 뒤척이기만 해요..."' }] },
     sep: { type: 'ng', title: 'NG 사항 안내서', sub: '02 SEP · 심실중격 · NG list', dx: 'NG 사항', sec: 'Contraindications · 금기 사항',
       groups: [{ level: '절대 NG', kind: 'hard', items: ['(절대 안 되는 것 1)', '(절대 안 되는 것 2)', '(절대 안 되는 것 3)'] },
                { level: '조심해 주세요', kind: 'soft', items: ['(조심해야 하는 것 1)', '(조심해야 하는 것 2)'] }] },
@@ -658,7 +661,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     favicon: { type: 'favicon', img: '' },
     texts: { type: 'texts',
       v: { chRA: 'RA', chRV: 'RV', chLA: 'LA', chLV: 'LV', pulseOn: 'Pulse on', pulseOff: 'Pulse off',
-        eye: 'Clinical report · Evidence 01', lPatient: '환자명', vPatient: 'OOO', lDoctor: '진료자', lDate: '진료일', lChart: '차트번호', vChart: 'CASE 0419',
+        eye: 'Clinical report · Evidence 01', lPatient: '환자명', vPatient: 'OOO', lDoctor: '진료자', lDate: '진료일', lChart: '차트번호', vChart: 'CASE 0419', vDate: '',
         foot: 'DEPTH 06 · HEART ACTIVE', stamp1: '확인', stamp2: 'CONFIRMED', attending: '담당의 · ATTENDING' },
       nodes: { vc: { name: 'Vena Cava', sub: '05 VC · 대정맥 · Disposition · 성향' }, ra: { name: 'Right Atrium', sub: '01 RA · 우심방 · Pharmacy · 약 제조' },
         cn: { name: 'Coronary Network', sub: '06 CN · 관상동맥망 · Banner links · 링크' }, ao: { name: 'Aortic Arch', sub: '04 AO · 대동맥궁 · Care list · 배려' },
@@ -735,8 +738,9 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     document.getElementById('rpSec').textContent = r.sec;
     document.getElementById('rpHead').innerHTML =
       '<tr><th>' + esc(T('lPatient')) + '</th><td>' + esc(T('vPatient')) + '</td><th>' + esc(T('lDoctor')) + '</th><td>' + esc((REPORTS.info && REPORTS.info.doctor) || '') + '</td></tr>' +
-      '<tr><th>' + esc(T('lDate')) + '</th><td>' + ds + '</td><th>' + esc(T('lChart')) + '</th><td>' + esc(T('vChart')) + '</td></tr>';
+      '<tr><th>' + esc(T('lDate')) + '</th><td>' + esc(T('vDate') || ds) + '</td><th>' + esc(T('lChart')) + '</th><td>' + esc(T('vChart')) + '</td></tr>';
     document.getElementById('rpContent').innerHTML = R[r.type](r, ds);
+    if (r.type === 'game' && window.__gameApply) window.__gameApply(r);
     if (r.type === 'game' && window.__game) window.__game(document.getElementById('mg'));
     document.querySelector('.rp').classList.toggle('wide', r.type === 'pair');
     document.getElementById('rpFoot').textContent = T('foot'); document.getElementById('rpStamp').innerHTML = esc(T('stamp1')) + '<br>' + esc(T('stamp2'));
@@ -839,6 +843,10 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     { who: '기운이 없어요', say: '"몸이 축 처지고 힘이 안 나요."', need: { '활력': 3 } },
     { who: '열도 나고 잠도 못 자요', say: '"열 때문에 밤새 뒤척이기만 해요..."', need: { '해열': 2, '진정': 2 } }
   ];
+  window.__gameApply = function (r) {
+    if (r.ing) ING.forEach(function (x) { if (r.ing[x.id]) x.name = r.ing[x.id]; });
+    if (r.orders) ORD.forEach(function (o, i) { var t = r.orders[i]; if (t) { if (t.who) o.who = t.who; if (t.say) o.say = t.say; } });
+  };
   var ICON = {
     moss: '<path d="M6 37 C5 30 10 26 15 27 C16 21 24 19 28 23 C33 20 40 25 39 31 C44 33 43 39 38 40 L10 40 C7 40 6 39 6 37Z" fill="#a8dbc7" stroke="#4f9a86"/><path d="M14 27v-5M24 21v-6M33 25v-5" stroke="#4f9a86"/><circle cx="14" cy="21" r="1.8" fill="#5fae97" stroke="#4f9a86"/><circle cx="24" cy="14" r="1.8" fill="#5fae97" stroke="#4f9a86"/><circle cx="33" cy="19" r="1.8" fill="#5fae97" stroke="#4f9a86"/><g fill="#4f9a86" stroke="none"><circle cx="14" cy="34" r="1"/><circle cx="22" cy="31" r="1"/><circle cx="29" cy="35" r="1"/><circle cx="35" cy="32" r="1"/></g>',
     lily: '<path d="M10 42 C14 24 22 12 34 10" fill="none" stroke="#5aa083"/><path d="M10 42 C5 34 7 26 14 22 C16 30 14 36 10 42Z" fill="#bfe6d6" stroke="#5aa083"/><path d="M10 42 C16 36 24 36 31 39 C24 44 16 45 10 42Z" fill="#bfe6d6" stroke="#5aa083"/><g fill="#fff" stroke="#7f9bd4"><g transform="translate(15.7 27) scale(.9)"><path d="M0 0C-4 0-5 5-5 8L5 8C5 5 4 0 0 0Z"/></g><g transform="translate(19.2 21.5) scale(.9)"><path d="M0 0C-4 0-5 5-5 8L5 8C5 5 4 0 0 0Z"/></g><g transform="translate(24.4 15.8) scale(.9)"><path d="M0 0C-4 0-5 5-5 8L5 8C5 5 4 0 0 0Z"/></g><g transform="translate(29 13) scale(.9)"><path d="M0 0C-4 0-5 5-5 8L5 8C5 5 4 0 0 0Z"/></g></g>',
@@ -988,7 +996,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
 
 <div class="adm" id="adm" aria-hidden="true">
   <div class="adw" role="dialog" aria-label="관리자">
-    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v6</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
+    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v7</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
     <div class="adb">
       <nav class="adn" id="admNav"></nav>
       <div class="adm-main" id="admMain">
@@ -1092,11 +1100,17 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       head('버튼');
       row(r.v, 'pulseOn', '심장 박동 켜짐 글자'); row(r.v, 'pulseOff', '심장 박동 꺼짐 글자');
       head('팝업 공통');
-      [['eye', '맨 위 작은 글자'], ['lPatient', '표: 환자명 칸 이름'], ['vPatient', '표: 환자명 값'], ['lDoctor', '표: 진료자 칸 이름'], ['lDate', '표: 진료일 칸 이름'], ['lChart', '표: 차트번호 칸 이름'], ['vChart', '표: 차트번호 값'], ['foot', '맨 아래 글자'], ['stamp1', '도장 윗줄'], ['stamp2', '도장 아랫줄'], ['attending', '성향 팝업 서명란 글자']].forEach(function (x) { row(r.v, x[0], x[1]); });
+      [['eye', '맨 위 작은 글자'], ['lPatient', '표: 환자명 칸 이름'], ['vPatient', '표: 환자명 값'], ['lDoctor', '표: 진료자 칸 이름'], ['lDate', '표: 진료일 칸 이름'], ['vDate', '표: 진료일 값 (비우면 오늘 날짜 자동)'], ['lChart', '표: 차트번호 칸 이름'], ['vChart', '표: 차트번호 값'], ['foot', '맨 아래 글자'], ['stamp1', '도장 윗줄'], ['stamp2', '도장 아랫줄'], ['attending', '성향 팝업 서명란 글자']].forEach(function (x) { row(r.v, x[0], x[1]); });
       return box;
     },
     site: function (r) { var i = inp(r, 'title', '탭에 표시될 이름'); i.addEventListener('input', function () { if (i.value.trim()) document.title = i.value; }); return $('div', {}, [$('p', { 'class': 'hint', text: '브라우저 탭에 표시되는 사이트 이름이에요. 비우면 기본 이름이 쓰여요. 저장하면 사이트에 반영돼요.' }), field('탭 이름', i)]); },
-    game: function () { return $('p', { 'class': 'hint', text: '약 조제실은 미니게임 팝업이라 제목·구분 이름·부제만 바꿀 수 있어요.' }); },
+    game: function (r) {
+      var box = $('div'); r.ing = r.ing || clone(H.defaults.ra.ing); r.orders = r.orders || clone(H.defaults.ra.orders);
+      box.appendChild($('p', { 'class': 'hint', text: '약 조제실 미니게임의 재료 이름과 환자 사연이에요. 약 효과 이름(진정·해열 등)은 게임 규칙이라 그대로예요.' }));
+      Object.keys(r.ing).forEach(function (k) { box.appendChild(field('재료 · ' + (H.defaults.ra.ing[k] || k), inp(r.ing, k))); });
+      r.orders.forEach(function (o, i) { box.appendChild($('div', { 'class': 'ad-card' }, [$('h4', { text: 'PATIENT ' + (i + 1) }), field('증상 이름', inp(o, 'who')), field('환자 대사', inp(o, 'say'))])); });
+      return box;
+    },
     ng: function (r, re) {
       var box = $('div');
       r.groups.forEach(function (gp, i) {
@@ -1109,7 +1123,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     trait: function (r, re) {
       var box = $('div');
       r.sections.forEach(function (x, i) {
-        var t = $('input', { type: 'text', value: x[0] }), v = $('textarea', { rows: 4, value: x[1] });
+        var t = $('input', { type: 'text', value: x[0] }), v = $('textarea', { rows: 9, value: x[1] });
         t.addEventListener('input', function () { x[0] = t.value; }); v.addEventListener('input', function () { x[1] = v.value; });
         box.appendChild($('div', { 'class': 'ad-card' }, [$('h4', { text: 'NOTE ' + (i + 1) }), field('제목', t), field('내용', v), delBtn(function () { r.sections.splice(i, 1); re(); })]));
       });
