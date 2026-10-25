@@ -988,7 +988,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
 
 <div class="adm" id="adm" aria-hidden="true">
   <div class="adw" role="dialog" aria-label="관리자">
-    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v5</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
+    <div class="adt"><span>관리자<small>ADMIN · CASE 0419 · v6</small></span><button type="button" class="adx" id="admClose2" aria-label="닫기">×</button></div>
     <div class="adb">
       <nav class="adn" id="admNav"></nav>
       <div class="adm-main" id="admMain">
@@ -1028,7 +1028,8 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
   function api(method, path, body) {
     var hd = { 'Authorization': 'Bearer ' + S.token, 'Accept': 'application/vnd.github+json' };
     if (body) hd['Content-Type'] = 'application/json';
-    return fetch('https://api.github.com/repos/' + S.repo + path, { method: method, headers: hd, cache: 'no-store', body: body ? JSON.stringify(body) : undefined }).then(function (r) {
+    var ac = window.AbortController ? new AbortController() : null, tm = ac ? setTimeout(function () { ac.abort(); }, 25000) : 0;
+    return fetch('https://api.github.com/repos/' + S.repo + path, { method: method, headers: hd, cache: 'no-store', signal: ac ? ac.signal : undefined, body: body ? JSON.stringify(body) : undefined }).then(function (r) { clearTimeout(tm);
       return r.json().catch(function () { return {}; }).then(function (j) {
         if (!r.ok) { var e = new Error(j.message || ('HTTP ' + r.status)); e.status = r.status; throw e; }
         return j;
@@ -1165,13 +1166,16 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
   function renderView() {
     var box = g('admEdit'); box.innerHTML = '';
     var r = S.data && S.data[S.view]; if (!r) return;
+    var d0 = H.defaults[S.view], seeded = false;
+    ['groups', 'sections', 'banners'].forEach(function (k) { if (Array.isArray(r[k]) && !r[k].length && d0 && d0[k] && d0[k].length) { r[k] = clone(d0[k]); seeded = true; } });
+    var lst = r.groups || r.sections || r.banners || r.items, hintExtra = lst ? ' (현재 ' + lst.length + '개)' : '';
     var label = ''; ORDER.forEach(function (o) { if (o[0] === S.view) label = o[1]; });
     var form = $('div');
     function render() { form.innerHTML = ''; if (r.type !== 'music' && r.type !== 'favicon' && r.type !== 'info' && r.type !== 'site' && r.type !== 'texts') { form.appendChild(field('팝업 제목', inp(r, 'title'))); form.appendChild(field('구분 이름', inp(r, 'dx'))); form.appendChild(field('부제 (제목 아래 작은 글씨)', inp(r, 'sub'))); form.appendChild(field('섹션 이름 (내용 위 구분선 글씨)', inp(r, 'sec'))); } form.appendChild(FORMS[r.type](r, render)); if (warn) warn.hidden = !isEmpty(); }
     var warn = null;
     function isEmpty() { return !!((r.groups && !r.groups.length) || (r.sections && !r.sections.length) || (r.banners && !r.banners.length) || (r.items && !r.items.length)); }
     render();
-    box.appendChild($('h3', { text: label })); box.appendChild($('p', { 'class': 'hint', text: '고친 뒤 아래 저장 버튼을 눌러야 GitHub에 반영돼요. 사이트에 보이기까지 1~2분 걸릴 수 있어요.' })); box.appendChild(form);
+    box.appendChild($('h3', { text: label })); box.appendChild($('p', { 'class': 'hint', text: '고친 뒤 아래 저장 버튼을 눌러야 GitHub에 반영돼요. 사이트에 보이기까지 1~2분 걸릴 수 있어요.' + hintExtra + (seeded ? ' 비어 있던 탭이라 기본 칸을 채워 뒀어요. 안의 글을 고쳐 쓰고 저장해 주세요.' : '') })); box.appendChild(form);
     warn = $('p', { 'class': 'hint err', text: '내용이 비어 있어서 사이트 팝업에도 아무것도 안 보여요. 항목을 추가하거나 아래 "기본값으로 되돌리기"를 눌러 주세요.' }); warn.hidden = !isEmpty(); box.insertBefore(warn, form);
     box.appendChild($('div', { style: 'height:14px' }));
     box.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '이 탭 기본값으로 되돌리기', onclick: function () {
@@ -1229,7 +1233,7 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       }); }
       return put().catch(function (e) { if (e.status === 409 || e.status === 422) return new Promise(function (r) { setTimeout(r, 800); }).then(put); throw e; });
     }).then(function () { H.apply(clone(S.data)); st('저장 완료 · 사이트 반영까지 1~2분 걸릴 수 있어요'); })
-      .catch(function (e) { st('저장 실패: ' + (e.status === 401 || e.status === 403 ? '토큰 권한을 확인해 주세요' : e.message), true); })
+      .catch(function (e) { st('저장 실패: ' + (e.name === 'AbortError' ? 'GitHub 응답이 25초 넘게 없어요. 네트워크를 확인하고 다시 저장해 주세요' : (e.status === 401 || e.status === 403 ? '토큰 권한을 확인해 주세요' : e.message)), true); })
       .then(function () { btn.disabled = !S.data; });
   }
 
