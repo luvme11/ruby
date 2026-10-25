@@ -1189,46 +1189,49 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     var sel = $('select'); [['hard', '절대 NG (분홍)'], ['soft', '조심 (노랑)']].forEach(function (o) { var op = $('option', { value: o[0], text: o[1] }); if (w.kind === o[0]) op.selected = true; sel.appendChild(op); });
     sel.addEventListener('change', function () { w.kind = sel.value; }); return sel;
   }
+  function sec(x) { if (Array.isArray(x)) return [x[0] == null ? '' : String(x[0]), x[1] == null ? '' : String(x[1])]; if (x && typeof x === 'object') return [String(x.title || x[0] || ''), String(x.text || x[1] || '')]; return [x == null ? '' : String(x), '']; }
+  function objx(x) { return x && typeof x === 'object' && !Array.isArray(x) ? x : {}; }
+  function itemsOf(x) { return Array.isArray(x) ? x.map(String) : (x ? [String(x)] : []); }
   var BD_ORDER = ['sep', 'vc', 'ao', 'cn', 'lv', 'ra'];
   var BD = {
     sep: { label: 'NG 사항', add: true, del: true,
       arr: function (d) { return d.sep.groups; },
-      view: function (x) { return { t: x.level || '(제목 없음)', s: (x.items || []).join(' · '), tag: x.kind === 'soft' ? '조심' : '절대 NG', cls: x.kind === 'soft' ? 'soft' : 'hard' }; },
-      work: function (x) { return clone(x); }, back: function (w) { w.items = w.items || []; return w; },
+      view: function (x) { x = objx(x); return { t: x.level || '(제목 없음)', s: itemsOf(x.items).join(' · '), tag: x.kind === 'soft' ? '조심' : '절대 NG', cls: x.kind === 'soft' ? 'soft' : 'hard' }; },
+      work: function (x) { x = clone(objx(x)); x.level = x.level || ''; x.kind = x.kind === 'soft' ? 'soft' : 'hard'; x.items = itemsOf(x.items); return x; }, back: function (w) { w.items = w.items || []; return w; },
       blank: function () { return { level: '', kind: 'hard', items: [] }; },
       empty: function (w) { return !(w.level || '').trim() && !(w.items || []).length; },
       form: function (w) { return [field('제목 (예: 절대 NG · 조심해 주세요)', inp(w, 'level')), field('색', kindSel(w)), field('내용 (한 줄에 하나씩)', lines(w, 'items', 10))]; } },
     vc: { label: '성향', add: true, del: true,
       arr: function (d) { return d.vc.sections; },
-      view: function (x) { return { t: x[0] || '(제목 없음)', s: (x[1] || '').replace(/\s+/g, ' ') }; },
-      work: function (x) { return { title: x[0], text: x[1] }; }, back: function (w) { return [w.title || '', w.text || '']; },
+      view: function (x) { var a = sec(x); return { t: a[0] || '(제목 없음)', s: a[1].replace(/\s+/g, ' ') }; },
+      work: function (x) { var a = sec(x); return { title: a[0], text: a[1] }; }, back: function (w) { return [w.title || '', w.text || '']; },
       blank: function () { return { title: '', text: '' }; },
       empty: function (w) { return !(w.title || '').trim() && !(w.text || '').trim(); },
       form: function (w) { return [field('제목', inp(w, 'title')), field('내용', area(w, 'text', 14))]; } },
     ao: { label: '배려 리스트', add: true, del: true,
       arr: function (d) { return d.ao.items; },
-      view: function (x) { return { t: x || '(빈 항목)', s: '' }; },
-      work: function (x) { return { text: x }; }, back: function (w) { return (w.text || '').replace(/\s*\n\s*/g, ' ').trim(); },
+      view: function (x) { return { t: x == null || x === '' ? '(빈 항목)' : String(x), s: '' }; },
+      work: function (x) { return { text: x == null ? '' : String(x) }; }, back: function (w) { return (w.text || '').replace(/\s*\n\s*/g, ' ').trim(); },
       blank: function () { return { text: '' }; },
       empty: function (w) { return !(w.text || '').trim(); },
       form: function (w) { return [field('이렇게 해 주세요 (한 항목)', area(w, 'text', 4))]; } },
     cn: { label: '링크 · 배너', add: true, del: true,
       arr: function (d) { return d.cn.banners; },
-      view: function (x) { return { t: x.name || '(이름 없음)', s: x.href || '(이동 주소 없음)' }; },
-      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      view: function (x) { x = objx(x); return { t: x.name || '(이름 없음)', s: x.href || '(이동 주소 없음)' }; },
+      work: function (x) { return clone(objx(x)); }, back: function (w) { return w; },
       blank: function () { return { name: '', img: '', href: '' }; },
       empty: function (w) { return !(w.name || '').trim() && !(w.href || '').trim() && !w.img; },
       form: function (w) { return [field('이름', inp(w, 'name')), field('이동할 주소 (https://...)', inp(w, 'href', 'https://')), imgField(w, 'img', '배너 이미지')]; } },
     lv: { label: '페어 소개', add: false, del: false,
       arr: function (d) { return d.lv.pair; },
-      view: function (x) { return { t: (x.name || '') + ' · ' + (x.kr || ''), s: x.quote || '' }; },
-      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      view: function (x) { x = objx(x); return { t: (x.name || '') + ' · ' + (x.kr || ''), s: x.quote || '' }; },
+      work: function (x) { return clone(objx(x)); }, back: function (w) { return w; },
       empty: function () { return false; },
       form: function (p) { return [field('FILE 이름', inp(p, 'file')), imgField(p, 'img', '이미지'), field('영문 이름', inp(p, 'name')), field('한글 이름', inp(p, 'kr')), field('설정 줄 ( | 로 구분 )', pipe(p, 'meta')), field('대사', inp(p, 'quote')), field('설명글', area(p, 'desc', 8))]; } },
     ra: { label: '약 조제실 사연', add: false, del: false,
       arr: function (d) { d.ra.orders = d.ra.orders || clone(H.defaults.ra.orders); return d.ra.orders; },
-      view: function (x) { return { t: x.who || '', s: x.say || '' }; },
-      work: function (x) { return clone(x); }, back: function (w) { return w; },
+      view: function (x) { x = objx(x); return { t: x.who || '', s: x.say || '' }; },
+      work: function (x) { return clone(objx(x)); }, back: function (w) { return w; },
       empty: function () { return false; },
       form: function (w) { return [field('증상 이름', inp(w, 'who')), field('환자 대사', inp(w, 'say'))]; } }
   };
@@ -1254,13 +1257,14 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
       var C = BD[k], arr = C.arr(S.data);
       arr.forEach(function (x, i) {
         shown++;
-        var v = C.view(x), canMove = C.add;
+        var v; try { v = C.view(x); } catch (err) { v = { t: '(읽을 수 없는 글)', s: err.message }; }
+        var canMove = C.add;
         var act = $('div', { 'class': 'bd-act' });
         if (canMove) {
           if (i > 0) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▲', title: '위로', onclick: function () { var t = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
           if (i < arr.length - 1) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '▼', title: '아래로', onclick: function () { var t = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = t; st('순서를 바꿨어요 · 아래 저장 버튼을 눌러야 사이트에 반영돼요'); renderBoard(); } }));
         }
-        act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '수정', onclick: function () { S.bd.edit = { cat: k, idx: i, w: C.work(arr[i]) }; renderBoard(); g('admMain').scrollTop = 0; } }));
+        act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '수정', onclick: function () { try { S.bd.edit = { cat: k, idx: i, w: C.work(arr[i]) }; } catch (err) { st('이 글을 열 수 없어요: ' + err.message, true); return; } renderBoard(); g('admMain').scrollTop = 0; } }));
         if (C.del) act.appendChild($('button', { type: 'button', 'class': 'ab ghost sm', text: '삭제', onclick: function () {
           if (!confirm('"' + v.t + '" 글을 삭제하고 사이트에서도 지울까요?\n(바로 GitHub에 저장돼요)')) return;
           arr.splice(i, 1); renderBoard(); save().then(function () { if (S.view === 'board' && !S.bd.edit) renderBoard(); });
@@ -1274,7 +1278,10 @@ input[type=text], input[type=password], textarea { cursor: text !important; }
     var e = S.bd.edit, C = BD[e.cat], isNew = e.idx == null;
     box.appendChild($('h3', { text: (isNew ? '새 글 쓰기 · ' : '글 수정 · ') + C.label }));
     box.appendChild($('p', { 'class': 'hint', text: '"저장하고 사이트에 올리기"를 누르면 GitHub에 바로 저장돼요. 사이트에는 1~2분 뒤에 반영돼요.' }));
-    var card = $('div', { 'class': 'ad-card' }); C.form(e.w).forEach(function (n) { card.appendChild(n); }); box.appendChild(card);
+    var card = $('div', { 'class': 'ad-card' });
+    try { C.form(e.w).forEach(function (n) { card.appendChild(n); }); } catch (err) { card.appendChild($('p', { 'class': 'hint err', text: '입력칸을 만들지 못했어요: ' + err.message })); }
+    if (!card.children.length) card.appendChild($('p', { 'class': 'hint err', text: '입력칸이 비어 있어요. 이 글의 데이터가 이상할 수 있어요. 취소를 누르고 알려 주세요.' }));
+    box.appendChild(card);
     var warn = $('p', { 'class': 'hint err', text: '내용을 입력해 주세요.' }); warn.hidden = true; box.appendChild(warn);
     box.appendChild($('div', { 'class': 'bd-btns' }, [
       $('button', { type: 'button', 'class': 'ab', text: '저장하고 사이트에 올리기', onclick: function () {
